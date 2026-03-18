@@ -1,4 +1,5 @@
-import { Page } from '@playwright/test'
+import { Page, expect } from '@playwright/test'
+import { esperarCarga } from '../utils/waits'
 
 export class LoginPage {
 
@@ -11,18 +12,21 @@ export class LoginPage {
   async goto() {
     await this.page.goto('https://portal-test.galeno.com.ar/login')
   }
+async login(dni: string, password: string) {
 
-  async login(dni: string, password: string) {
+  const dniInput = this.page.getByLabel('Número')
+  const passInput = this.page.getByLabel('Contraseña')
+  const loginButton = this.page.getByRole('button', { name: 'INGRESÁ' })
 
-  await this.page.getByLabel('Número').fill(dni)
-  await this.page.getByLabel('Contraseña').fill(password)
+  await this.page.waitForLoadState('networkidle')
 
-  await this.page.getByRole('button', { name: 'INGRESÁ' }).click()
+  await dniInput.fill(dni)
+  await passInput.fill(password)
 
-  // esperar hasta que deje de estar en login
-  await this.page.waitForFunction(() => {
-    return !window.location.href.includes('/login')
-  }, { timeout: 60000 })
+  await expect(loginButton).toBeEnabled()
 
+  await loginButton.click()
+
+  await esperarCarga(this.page)
 }
 }

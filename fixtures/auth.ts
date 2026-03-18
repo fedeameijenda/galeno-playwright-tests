@@ -17,7 +17,7 @@ export const test = base.extend<Fixtures>({
     await loginPage.goto()
     await loginPage.login(user!.dni, user!.password)
 
-    // asegurar que el home realmente cargó
+    // aseguro que el home realmente cargó
     await page.waitForURL('**/socio/home', { timeout: 60000 })
 
     await use(page)
